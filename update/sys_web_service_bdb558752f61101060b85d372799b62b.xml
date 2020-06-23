@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_web_service">
+    <sys_web_service action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <function_name>execute</function_name>
+        <name>inciden</name>
+        <scoped_name>x_58872_needit_inciden</scoped_name>
+        <script><![CDATA[(function scriptedWebServiceOperation(request, response) {
+// response from template 
+response.ErrorType = "";
+	// Add your code here
+/*	
+	if (request.Action == "Update") {
+		if (updatesucceeded or failed) {
+			response.Success = true;
+			response.Message = "Ticket has been updated.";
+			}
+		else {
+			response.Success = false;
+			response.Message = "Update failed ....";
+			if (ticket is closed) {
+				response.ErrorType = "Closed";
+			}
+		}
+	}
+	else 
+*/
+})(request, response);]]></script>
+        <short_description/>
+        <sys_class_name>sys_web_service</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-06-22 09:47:03</sys_created_on>
+        <sys_id>bdb558752f61101060b85d372799b62b</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>inciden</sys_name>
+        <sys_package display_value="NeedIt" source="x_58872_needit">6ead8e780f603200cd674f8ce1050ed1</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="NeedIt">6ead8e780f603200cd674f8ce1050ed1</sys_scope>
+        <sys_update_name>sys_web_service_bdb558752f61101060b85d372799b62b</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-06-22 09:47:03</sys_updated_on>
+        <wsdl>https://dev87371.service-now.com/x_58872_needit_inciden.do?WSDL</wsdl>
+        <wsdl_compliance>false</wsdl_compliance>
+    </sys_web_service>
+</record_update>
