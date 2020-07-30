@@ -38,7 +38,7 @@ response.ErrorType = "";
         <sys_update_name>sys_web_service_bdb558752f61101060b85d372799b62b</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
         <sys_updated_on>2020-06-22 09:47:03</sys_updated_on>
-        <wsdl>https://dev87371.service-now.com/x_58872_needit_inciden.do?WSDL</wsdl>
+        <wsdl>https://dev15537.service-now.com/x_58872_needit_inciden.do?WSDL</wsdl>
         <wsdl_compliance>false</wsdl_compliance>
     </sys_web_service>
 </record_update>
