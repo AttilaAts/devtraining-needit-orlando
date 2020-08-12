@@ -9,8 +9,8 @@
         <name>postresource</name>
         <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
 // implement resource here
-var reqData = request.body.data;
-var transactionID;
+var reqData = request.body.data.CreateIncidentRequest;
+/*var transactionID;
 var action;
 var incidentNumber;
 var accountName;
@@ -20,20 +20,20 @@ var something;
 if (reqData instanceof Array) {
  transactionID = reqData[0].TransactionID;
  action = reqData[0].Action;
- incidentNumber = reqData[0].IncidentNumber;
- accountName = reqData[0].AccountName;
- summary = reqData[0].Summary;
- incidentDescription = reqData[0].Description;
+ incidentNumber = reqData[0].Incident.IncidentNumber;
+ accountName = reqData[0].Incident.AccountName;
+ summary = reqData[0].Incident.Summary;
+ incidentDescription = reqData[0].Incident.Description;
 } // if
-else {
- transactionID = reqData.TransactionID;
- action = reqData.Action;
- incidentNumber = reqData.IncidentNumber;
- accountName = reqData.AccountName;
- summary = reqData.Summary;
- incidentDescription = reqData.Description;	
-} // else
-	
+else { */
+ var transactionID = reqData.TransactionID;
+ var action = reqData.Action;
+ var incidentNumber = reqData.Incident.IncidentNumber;
+ var accountName = reqData.Incident.AccountName;
+ var summary = reqData.Incident.Summary;
+ var incidentDescription = reqData.Incident.Description;
+ var customerEmail = reqData.Incident.Customer.Email;
+/*} // else */
 var act = action.toUpperCase();
 switch (action.toUpperCase()) {
   case 'CREATE':
@@ -68,12 +68,13 @@ response.setContentType('application/json');
 response.setStatus(200);
 var body = {};
 body.TransactionID = transactionID;
-body.Action = action;
+body.Action = act;
 body.ActionValidity = something;
 body.IncidentNumber = incidentNumber;
 body.AccountName = accountName;
 body.Summary = summary;
 body.Description = incidentDescription;	
+body.CustomerEmail = customerEmail;
 response.setBody(body);	
 })(request, response);]]></operation_script>
         <operation_uri>/api/x_58872_needit/needit_api</operation_uri>
@@ -89,14 +90,14 @@ response.setBody(body);
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2020-08-11 09:54:09</sys_created_on>
         <sys_id>be140e311bae1010b28f8515ec4bcbcf</sys_id>
-        <sys_mod_count>15</sys_mod_count>
+        <sys_mod_count>27</sys_mod_count>
         <sys_name>postresource</sys_name>
         <sys_package display_value="NeedIt" source="x_58872_needit">6ead8e780f603200cd674f8ce1050ed1</sys_package>
         <sys_policy/>
         <sys_scope display_value="NeedIt">6ead8e780f603200cd674f8ce1050ed1</sys_scope>
         <sys_update_name>sys_ws_operation_be140e311bae1010b28f8515ec4bcbcf</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2020-08-11 14:36:47</sys_updated_on>
+        <sys_updated_on>2020-08-12 11:28:16</sys_updated_on>
         <web_service_definition display_value="NeedIt API">7562cafd1b6e1010b28f8515ec4bcb2f</web_service_definition>
         <web_service_version/>
     </sys_ws_operation>
