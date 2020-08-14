@@ -19,6 +19,21 @@ var summary = reqData.Incident.Summary;
 var incidentDescription = reqData.Incident.Description;
 var activityDescription = reqData.Incident.Activity.Description;
 var ticketNumber = reqData.TicketNumber;
+var priority = parseInt(reqData.Incident.Urgency);
+var ticketPriority = 0;
+if (priority <= 1) {
+	ticketPriority = 4;
+} // if
+if (priority >= 4) {
+	ticketPriority = 1;
+} // if
+if (priority == 2) {
+	ticketPriority = 3;
+} // if
+if (priority == 3) {
+	ticketPriority = 2;
+} // if
+
 var ticketStatusName = '';
 // Some error handling would be useful here, missing or blank field, invalid value, etc.
 // Search in the incidents table for the specified IncidentNumber in the CorrelationID field
@@ -113,22 +128,42 @@ switch (action) {
 			body.IncidentNumber = incidentNumber;
 			body.ServiceStatus = '';
 			body.Success = true;
-			body.Message = 'The ticket creation part of the code is not yet ready.';
 			body.ErrorType = '';
 			
 			var newTicket = new GlideRecord('x_58872_needit_needit');
 			//newTicket.newRecord();
 			newTicket.initialize();
-			newTicket.description = 'The description';
-			newTicket.short_description = 'The short description';
+			newTicket.state = 1;
+			newTicket.priority = ticketPriority;
+			newTicket.description = incidentDescription + '\r\n' + activityDescription;
+			newTicket.short_description = summary;
 			newTicket.u_when_needed = new GlideDateTime("2020-08-29 02:16:03");
 			newTicket.u_requested_for = 'System Administrator';
 			newTicket.u_requested_for_email = 'admin@example.com';
 			newTicket.u_request_type = 'legal';
 			newTicket.u_what_needed = 'Legal 1';
 			newTicket.correlation_id = incidentNumber;
-			var newsysid = newTicket.insert();
-			body.TicketNumber = newsysid;
+			if (newTicket.canCreate()) {
+				var newsysid = newTicket.insert();
+				if (!newTicket.isActionAborted()) {
+					// inserted
+					newTicket.get('sys_id', newsysid);
+					body.TicketNumber = newTicket.getDisplayValue(); // newsysid;
+					body.Message = 'Ticket ' + newTicket.getDisplayValue() + ' (sys_id: ' + newsysid + ') has been created.';
+				} // if
+				else {
+					// insert failed
+					body.Message = newTicket.getLastErrorMessage();
+					body.TicketNumber = 'ERROR';
+					body.Message = 'The ticket creation action has been aborted.';
+				} // else
+			} // if
+			else {
+				// cannot be created
+				body.Success = false;
+				body.Message = 'Ticket cannot be created due to insufficient permissions.';
+				body.TicketNumber = '';
+			} // else
 		} // 
 	break;
 
@@ -223,14 +258,14 @@ response.setBody(body);
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2020-08-11 09:54:09</sys_created_on>
         <sys_id>be140e311bae1010b28f8515ec4bcbcf</sys_id>
-        <sys_mod_count>104</sys_mod_count>
+        <sys_mod_count>114</sys_mod_count>
         <sys_name>postresource</sys_name>
         <sys_package display_value="NeedIt" source="x_58872_needit">6ead8e780f603200cd674f8ce1050ed1</sys_package>
         <sys_policy/>
         <sys_scope display_value="NeedIt">6ead8e780f603200cd674f8ce1050ed1</sys_scope>
         <sys_update_name>sys_ws_operation_be140e311bae1010b28f8515ec4bcbcf</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2020-08-14 09:59:13</sys_updated_on>
+        <sys_updated_on>2020-08-14 12:30:57</sys_updated_on>
         <web_service_definition display_value="NeedIt API">7562cafd1b6e1010b28f8515ec4bcb2f</web_service_definition>
         <web_service_version/>
     </sys_ws_operation>
