@@ -15,11 +15,11 @@ var reqData = request.body.data.CreateIncidentRequest;
 var transactionID = reqData.TransactionID;
 var action = reqData.Action.toUpperCase();	
 var incidentNumber = reqData.Incident.IncidentNumber;
-var accountName = reqData.Incident.AccountName;
 var summary = reqData.Incident.Summary;
 var incidentDescription = reqData.Incident.Description;
-var customerEmail = reqData.Incident.Customer.Email;
+var activityDescription = reqData.Incident.Activity.Description;
 var ticketNumber = reqData.TicketNumber;
+var ticketStatusName = '';
 // Some error handling would be useful here, missing or blank field, invalid value, etc.
 // Search in the incidents table for the specified IncidentNumber in the CorrelationID field
 var myObj = new GlideRecord('x_58872_needit_needit');
@@ -32,10 +32,22 @@ while(myObj.next()){
 	ticketfound = true;
 	ticketNumber = myObj.number;
 	ticketsysid = myObj.sys_id;
-	ticketstatus = myObj.state + 0;
-//	ticketstatus = ToInteger(ticketstatus);
+	ticketstatus = parseInt(myObj.state);
+	body.ticketstatus = ticketstatus;
 	// Statuses :  New = 1, In Progress = 2, On Hold = 3, Resolved = 4, Closed = 5, Cancelled = 6
 } // while
+if (!ticketfound) {
+	var myObj2 = new GlideRecord('x_58872_needit_needit');
+	myObj2.addQuery('number', '=', ticketNumber);
+	myObj2.query();
+	while(myObj2.next()){
+		ticketfound = true;
+		ticketNumber = myObj2.number;
+		ticketsysid = myObj2.sys_id;
+		ticketstatus = parseInt(myObj2.state);
+		body.ticketstatus = ticketstatus;
+	} // while
+} // if
 	
 switch (action) {
   case 'CREATE':
@@ -46,12 +58,35 @@ switch (action) {
 			body.IncidentNumber = incidentNumber;
 			body.ErrorType = '';
 			switch (ticketstatus) {
+				case 1:
+					ticketStatusName = 'New';
+					break;
+				case 2:
+					ticketStatusName = 'In Progress';
+					break;
+				case 3:
+					ticketStatusName = 'On Hold';
+					break;
+				case 4:
+					ticketStatusName = 'Resolved';
+					break;
+				case 5:
+					ticketStatusName = 'Closed';
+					break;
+				case 6:
+					ticketStatusName = 'Cancelled';
+					break;
+				default:
+					ticketStatusName = 'Unknown';
+					break;
+			} // switch
+			switch (ticketstatus) {
 				case 1: // New, use case 2.1.2
 				case 2: // In Progress, use case 2.1.2
 				case 3: // On Hold, use case 2.1.2
 				case 4: // Resolved, use case 2.1.2
 					body.Success = true;
-					body.Message = 'There already is a ticket (' + ticketNumber + ') in an active state in ServiceNow bound to the IncidentNumber ' + incidentNumber + '.';
+					body.Message = 'There already is a ticket (' + ticketNumber + ') in an active state (' + ticketStatusName + ') in ServiceNow bound to the IncidentNumber ' + incidentNumber + '.';
 					body.ServiceStatus = '';
 					break;
 				case 5: // Closed, use case 2.1.3
@@ -72,19 +107,36 @@ switch (action) {
 			} // switch
 		} // if ticketfound
 		else {
-			// create a new ticket
+			// create a new ticket here, while it is not yet coded I send a response as if the ticket has been created
+			body.TransactionID = transactionID;
+//			body.TicketNumber = 'NOT-CREATED';
+			body.IncidentNumber = incidentNumber;
+			body.ServiceStatus = '';
+			body.Success = true;
+			body.Message = 'The ticket creation part of the code is not yet ready.';
+			body.ErrorType = '';
+			
+			var newTicket = new GlideRecord('x_58872_needit_needit');
+			//newTicket.newRecord();
+			newTicket.initialize();
+			newTicket.description = 'The description';
+			newTicket.short_description = 'The short description';
+			newTicket.u_when_needed = new GlideDateTime("2020-08-29 02:16:03");
+			newTicket.u_requested_for = 'System Administrator';
+			newTicket.u_requested_for_email = 'admin@example.com';
+			newTicket.u_request_type = 'legal';
+			newTicket.u_what_needed = 'Legal 1';
+			newTicket.correlation_id = incidentNumber;
+			var newsysid = newTicket.insert();
+			body.TicketNumber = newsysid;
 		} // 
 	break;
 
   case 'UPDATE':
 	something = 'It is a Update request.';
-		
 /*	if ((ticketNumber == null) || ((ticketNumber != null) && (ticketNumber == '')) )  {
 		body.Issue = 'TicketNumber is null';
-	} // if
-*/
-		
-		
+	} // if */
 		if (ticketfound) {
 			// Update the ticket by adding a new work note
 			body.TransactionID = transactionID;
@@ -145,10 +197,8 @@ switch (action) {
 	body.Action = action;
 	body.ActionValidity = something;
 	body.IncidentNumber = incidentNumber;
-	body.AccountName = accountName;
 	body.Summary = summary;
 	body.Description = incidentDescription;	
-	body.CustomerEmail = customerEmail;
 	body.Sys_ID = ticketsysid;
 	body.TicketNumber = ticketNumber;
 	body.TicketState = ticketstatus;
@@ -173,14 +223,14 @@ response.setBody(body);
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2020-08-11 09:54:09</sys_created_on>
         <sys_id>be140e311bae1010b28f8515ec4bcbcf</sys_id>
-        <sys_mod_count>87</sys_mod_count>
+        <sys_mod_count>104</sys_mod_count>
         <sys_name>postresource</sys_name>
         <sys_package display_value="NeedIt" source="x_58872_needit">6ead8e780f603200cd674f8ce1050ed1</sys_package>
         <sys_policy/>
         <sys_scope display_value="NeedIt">6ead8e780f603200cd674f8ce1050ed1</sys_scope>
         <sys_update_name>sys_ws_operation_be140e311bae1010b28f8515ec4bcbcf</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2020-08-13 14:00:52</sys_updated_on>
+        <sys_updated_on>2020-08-14 09:59:13</sys_updated_on>
         <web_service_definition display_value="NeedIt API">7562cafd1b6e1010b28f8515ec4bcb2f</web_service_definition>
         <web_service_version/>
     </sys_ws_operation>
