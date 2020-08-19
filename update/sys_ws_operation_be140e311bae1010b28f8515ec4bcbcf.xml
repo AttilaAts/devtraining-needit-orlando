@@ -7,30 +7,41 @@
         <enforce_acl>cf9d01d3e73003009d6247e603f6a990</enforce_acl>
         <http_method>POST</http_method>
         <name>postresource</name>
-        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
+        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) { // 2020.08.19. 15:25
 var body = {};
 var ticketfound = false;
 var ticketfoundin1or2 = -1;
 // Take values from the request body	
+var incidentNumber = '';
+var summary = '';
+var incidentDescription = '';
+var activityDescription = '' ;
+var priority = 0;
+var ticketPriority = 0;
 var reqData = request.body.data.CreateIncidentRequest;
+if (reqData == null) {
+	reqData = request.body.data.UpdateIncidentRequest;
+	incidentNumber = reqData.Activity.IncidentNumber;
+} // if
+else {
+	incidentNumber = reqData.Incident.IncidentNumber;
+	summary = reqData.Incident.Summary;
+	incidentDescription = reqData.Incident.Description;
+	activityDescription = reqData.Incident.Activity.Description;
+	// Take Urgency from the request and translate it to ServiceNow Priority	
+	priority = parseInt(reqData.Incident.Urgency);
+	if (priority <= 1) { ticketPriority = 4; } // if
+	if (priority >= 4) { ticketPriority = 1; } // if
+	if (priority == 2) { ticketPriority = 3; } // if
+	if (priority == 3) { ticketPriority = 2; } // if
+} // else
+	
 var pluginName = reqData.Name;
 var pluginID = reqData.ID;
 var transactionID = reqData.TransactionID;
 var action = reqData.Action.toUpperCase();	
-var incidentNumber = reqData.Incident.IncidentNumber;
 var accountName = '';
-var summary = reqData.Incident.Summary;
-var incidentDescription = reqData.Incident.Description;
-var activityDescription = reqData.Incident.Activity.Description;
 var ticketNumber = reqData.TicketNumber;
-// Take Urgency from the request and translate it to ServiceNow Priority	
-var priority = parseInt(reqData.Incident.Urgency);
-var ticketPriority = 0;
-if (priority <= 1) { ticketPriority = 4; } // if
-if (priority >= 4) { ticketPriority = 1; } // if
-if (priority == 2) { ticketPriority = 3; } // if
-if (priority == 3) { ticketPriority = 2; } // if
-
 var ticketStatusName = '';
 // Some error handling would be useful here, missing or blank field, invalid value, etc.
 // Search in the incidents table for the specified IncidentNumber in the CorrelationID field
@@ -124,14 +135,12 @@ switch (action) {
 		else {
 			// create a new ticket here, while it is not yet coded I send a response as if the ticket has been created
 			body.TransactionID = transactionID;
-//			body.TicketNumber = 'NOT-CREATED';
 			body.IncidentNumber = incidentNumber;
 			body.ServiceStatus = '';
 			body.Success = true;
 			body.ErrorType = '';
 			
-			var newTicket = new GlideRecord('x_58872_needit_needit');
-			//newTicket.newRecord();
+			var newTicket = new GlideRecord('x_58872_needit_needit'); //newTicket.newRecord();
 			newTicket.initialize();
 			newTicket.state = 1;
 			newTicket.priority = ticketPriority;
@@ -161,8 +170,8 @@ switch (action) {
 			newTicket.description = S;
 			newTicket.short_description = summary;
 			var gdt = new GlideDateTime();
-			gdt.addSeconds(60*60*24*5);
-			newTicket.u_when_needed = gdt; // "2020-08-29 02:16:03");
+			gdt.addSeconds(60*60*24*3);
+			newTicket.u_when_needed = gdt;
 			newTicket.u_requested_for = 'System Administrator';
 			newTicket.u_requested_for_email = 'admin@example.com';
 			newTicket.u_request_type = 'legal';
@@ -206,9 +215,34 @@ switch (action) {
 				case 2: // In Progress, use case 2.2.1
 				case 3: // On Hold, use case 2.2.1
 				case 4: // Resolved, use case 2.2.1
-					body.Success = true;
-					body.Message = 'Ticket (' + ticketNumber + ') has not been updated due to missing code.';
-					body.ServiceStatus = '';
+					var tickettoupdate;
+					if (ticketfoundin1or2 == 1) {
+						tickettoupdate = myObj;
+					} // if
+					else {
+						if (ticketfoundin1or2 == 2) {
+							tickettoupdate = myObj2;
+						} // if
+						else {
+							// ERROR
+						} // else
+					} // else
+					if (tickettoupdate.canWrite()) {
+						//tickettoupdate.work_notes = reqData.Activity.Description;
+						tickettoupdate.comments.setJournalEntry(reqData.Activity.Description);
+						tickettoupdate.update();
+						if (!tickettoupdate.isActionAborted()) { // Update succeeded
+							body.Success = true;
+							body.Message = 'Ticket (' + ticketNumber + ') has been updated.';
+							body.ServiceStatus = '';
+						} // if
+						else { // Update failed
+							// set body here
+						} // else
+					} // if
+					else {
+						// cannot write
+					} // else
 					break;
 				case 5: // Closed, use case 2.1.2
 					body.Success = true;
@@ -282,14 +316,14 @@ response.setBody(body);
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2020-08-11 09:54:09</sys_created_on>
         <sys_id>be140e311bae1010b28f8515ec4bcbcf</sys_id>
-        <sys_mod_count>136</sys_mod_count>
+        <sys_mod_count>148</sys_mod_count>
         <sys_name>postresource</sys_name>
         <sys_package display_value="NeedIt" source="x_58872_needit">6ead8e780f603200cd674f8ce1050ed1</sys_package>
         <sys_policy/>
         <sys_scope display_value="NeedIt">6ead8e780f603200cd674f8ce1050ed1</sys_scope>
         <sys_update_name>sys_ws_operation_be140e311bae1010b28f8515ec4bcbcf</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2020-08-17 15:18:39</sys_updated_on>
+        <sys_updated_on>2020-08-19 13:25:48</sys_updated_on>
         <web_service_definition display_value="NeedIt API">7562cafd1b6e1010b28f8515ec4bcb2f</web_service_definition>
         <web_service_version/>
     </sys_ws_operation>
