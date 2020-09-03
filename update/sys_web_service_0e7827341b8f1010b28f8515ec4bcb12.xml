@@ -6,10 +6,11 @@
         <scoped_name>x_58872_needit_SOAPXML1</scoped_name>
         <script><![CDATA[(function scriptedWebServiceOperation(request, response) {
 var xmldoc = new XMLDocument2();
-//if (xmldoc.parseXML( "<Response></Response>")) {
-//if (xmldoc.parseXML("<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header /><SOAP-ENV:Body><SOAP-ENV:CreateIncidentResponse xmlns=\"Xerox.XIS.MpsHelpDeskService\"><SOAP-ENV:CreateIncidentResult xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"></SOAP-ENV:CreateIncidentResult></SOAP-ENV:CreateIncidentResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>")) {
-if (xmldoc.parseXML("<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:CreateIncidentResponse xmlns=\"Xerox.XIS.MpsHelpDeskService\"><SOAP-ENV:CreateIncidentResult xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"></SOAP-ENV:CreateIncidentResult></SOAP-ENV:CreateIncidentResponse></SOAP-ENV:Envelope>")) {
+//1. wrong! if (xmldoc.parseXML( "<Response></Response>")) {
+//2. wrong! if (xmldoc.parseXML("<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header /><SOAP-ENV:Body><SOAP-ENV:CreateIncidentResponse xmlns=\"Xerox.XIS.MpsHelpDeskService\"><SOAP-ENV:CreateIncidentResult xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"></SOAP-ENV:CreateIncidentResult></SOAP-ENV:CreateIncidentResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>")) {
+//3. wrong! if (xmldoc.parseXML("<SOAP-ENV:CreateIncidentResponse xmlns=\"Xerox.XIS.MpsHelpDeskService\"><SOAP-ENV:CreateIncidentResult xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"></SOAP-ENV:CreateIncidentResult></SOAP-ENV:CreateIncidentResponse>")) {	
 	
+if (xmldoc.parseXML("<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:CreateIncidentResponse xmlns=\"Xerox.XIS.MpsHelpDeskService\"><SOAP-ENV:CreateIncidentResult xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"></SOAP-ENV:CreateIncidentResult></SOAP-ENV:CreateIncidentResponse></SOAP-ENV:Envelope>")) {
 	var el = xmldoc.getNode("/SOAP-ENV:Envelope/SOAP-ENV:CreateIncidentResponse/SOAP-ENV:CreateIncidentResult");
 	xmldoc.setCurrentElement(el);
 	xmldoc.createElementWithTextValue("SOAP-ENV:Name", request.Name);
@@ -19,8 +20,8 @@ if (xmldoc.parseXML("<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.
 	xmldoc.createElementWithTextValue("SOAP-ENV:IncidentNumber", request.IncidentNumber);
 	xmldoc.createElementWithTextValue("SOAP-ENV:ServiceStatus", request.ServiceStatus);
 	xmldoc.createElementWithTextValue("SOAP-ENV:Success", "true");
-	xmldoc.createElementWithTextValue("SOAP-ENV:Message", request.AssetSerialNumber);
-	xmldoc.createElementWithTextValue("SOAP-ENV:ErrorType", request.AssetAssetNumber);
+	xmldoc.createElementWithTextValue("SOAP-ENV:Message", ""); // request.AssetSerialNumber);
+	xmldoc.createElementWithTextValue("SOAP-ENV:ErrorType", ""); // request.AssetAssetNumber);
 } // if
 else {
 	xmldoc.parseXML("<ErrorResponse></ErrorResponse>");
@@ -44,14 +45,14 @@ response.ErrorType = request.AssetAssetNumber;
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2020-09-02 11:10:03</sys_created_on>
         <sys_id>0e7827341b8f1010b28f8515ec4bcb12</sys_id>
-        <sys_mod_count>77</sys_mod_count>
+        <sys_mod_count>83</sys_mod_count>
         <sys_name>SOAPXML1</sys_name>
         <sys_package display_value="NeedIt" source="x_58872_needit">6ead8e780f603200cd674f8ce1050ed1</sys_package>
         <sys_policy/>
         <sys_scope display_value="NeedIt">6ead8e780f603200cd674f8ce1050ed1</sys_scope>
         <sys_update_name>sys_web_service_0e7827341b8f1010b28f8515ec4bcb12</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2020-09-02 14:26:25</sys_updated_on>
+        <sys_updated_on>2020-09-03 08:39:13</sys_updated_on>
         <wsdl>https://dev15537.service-now.com/x_58872_needit_SOAPXML1.do?WSDL</wsdl>
         <wsdl_compliance>true</wsdl_compliance>
     </sys_web_service>
