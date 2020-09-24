@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ws_operation">
+    <sys_ws_operation action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <consumes>application/json</consumes>
+        <consumes_customized>false</consumes_customized>
+        <default_operation_uri/>
+        <enforce_acl>cf9d01d3e73003009d6247e603f6a990</enforce_acl>
+        <http_method>POST</http_method>
+        <name>SFHS</name>
+        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
+    var sysid = request.body.data.sys_id;
+    var assign = request.body.data.assigned_to;
+    var clscode = request.body.data.close_code;
+    var clsnote = request.body.data.close_notes;
+    var wknote = request.body.data.work_notes;
+    var ventic = request.body.data.u_vendor_ticket;
+    var xaction = request.body.data.u_xerox_action;
+    var xmess = request.body.data.u_xerox_message;
+    var xticnum = request.body.data.u_xerox_ticketnumber;
+    var xtranid = request.body.data.u_xerox_transaction_id;
+/*AA 
+    var gr = new GlideRecord("incident");
+    gr.get(sysid);
+    gr.assigned_to = assign;
+    gr.close_code = clscode;
+    gr.close_notes = clsnote;
+    gr.work_notes = wknote;
+    gr.u_vendor_ticket = ventic;
+    gr.u_xerox_action = xaction;
+    gr.u_xerox_message = xmess;
+    gr.u_xerox_ticketnumber = xticnum;
+    gr.u_xerox_transaction_id = xtranid;
+    gr.update();
+AA*/	
+	
+/*****
+            var xmldoc = new XMLDocument2();
+            if (xmldoc.parseXML("<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:CreateIncidentResponse xmlns=\"Xerox.XIS.MpsHelpDeskService\"><SOAP-ENV:CreateIncidentResult xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"></SOAP-ENV:CreateIncidentResult></SOAP-ENV:CreateIncidentResponse></SOAP-ENV:Envelope>")) {
+                //if (xmldoc.parseXML("<Response></Response>")) {
+                   // gs.error(xmldoc.getDocumentElement());
+ 
+                    var el = xmldoc.getNode("/SOAP-ENV:Envelope/SOAP-ENV:CreateIncidentResponse/SOAP-ENV:CreateIncidentResult");
+ 
+                    xmldoc.setCurrentElement(el);
+                    xmldoc.createElementWithTextValue("SOAP-ENV:TransactionID", u_xerox_transaction_id);
+                    xmldoc.createElementWithTextValue("SOAP-ENV:TicketNumber", sys_id);
+                    xmldoc.createElementWithTextValue("SOAP-ENV:IncidentNumber", u_vendor_ticket);
+                    xmldoc.createElementWithTextValue("SOAP-ENV:ServiceStatus", "");
+                    xmldoc.createElementWithTextValue("SOAP-ENV:Succcess", "true");
+                    xmldoc.createElementWithTextValue("SOAP-ENV:Message", "Saint Francis Incident has been Updated"); // request.AssetSerialNumber);
+                    xmldoc.createElementWithTextValue("SOAP-ENV:ErrorType", ""); // request.AssetAssetNumber);
+                    xmldoc.createElementWithTextValue("ErrorType", "Hello it works"); // request.AssetAssetNumber);
+                } //if
+                else {
+                    xmldoc.parseXML("<ErrorResponse></ErrorResponse>");
+                    xmldoc.createElementWithTextValue("Message", "Parse error");
+                } // else
+                //gs.error(xmldoc.getDocumentElement());
+                response.soapResponseElement = xmldoc.getDocumentElement();
+*****/
+    var body = {};
+/*AA 
+    body.TransactionID = gr.u_xerox_transaction_id;
+    body.TicketNumber = gr.sys_id;
+    body.IncidentNumber = gr.u_vendor_ticket;
+    body.ServiceStatus = gr.u_xerox_servicestatus;
+    body.Succcess = "true";
+    body.Message = "Saint Francis Incident has been Updated";
+    body.ErrorType = gr.u_xerox_errortype;
+AA*/ 
+	
+	
+    body.TransactionID = xtranid;
+    body.TicketNumber = sysid;
+    body.IncidentNumber = ventic;
+    body.ServiceStatus = "";
+    body.Succcess = true;
+    body.Message = "Saint Francis Incident has been Updated";
+    body.ErrorType = "";
+	
+	
+    response.setContentType('application/json');
+    response.setStatus(200);
+    response.setBody(body);
+})(request, response);]]></operation_script>
+        <operation_uri>/api/x_58872_needit/needit_api/sfhs</operation_uri>
+        <produces>application/json,application/xml,text/xml</produces>
+        <produces_customized>false</produces_customized>
+        <relative_path>/sfhs</relative_path>
+        <request_example/>
+        <requires_acl_authorization>true</requires_acl_authorization>
+        <requires_authentication>true</requires_authentication>
+        <requires_snc_internal_role>true</requires_snc_internal_role>
+        <short_description/>
+        <sys_class_name>sys_ws_operation</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-09-24 07:02:18</sys_created_on>
+        <sys_id>dd6240481b2f1010b28f8515ec4bcb33</sys_id>
+        <sys_mod_count>2</sys_mod_count>
+        <sys_name>SFHS</sys_name>
+        <sys_package display_value="NeedIt" source="x_58872_needit">6ead8e780f603200cd674f8ce1050ed1</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="NeedIt">6ead8e780f603200cd674f8ce1050ed1</sys_scope>
+        <sys_update_name>sys_ws_operation_dd6240481b2f1010b28f8515ec4bcb33</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-09-24 07:11:44</sys_updated_on>
+        <web_service_definition display_value="NeedIt API">7562cafd1b6e1010b28f8515ec4bcb2f</web_service_definition>
+        <web_service_version/>
+    </sys_ws_operation>
+</record_update>
