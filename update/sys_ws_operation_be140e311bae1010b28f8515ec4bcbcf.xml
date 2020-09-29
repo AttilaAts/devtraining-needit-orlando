@@ -7,7 +7,8 @@
         <enforce_acl>cf9d01d3e73003009d6247e603f6a990</enforce_acl>
         <http_method>POST</http_method>
         <name>postresource</name>
-        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) { // 2020.09.28. 16:18
+        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) { // 2020.09.29. 14:07
+// Create the response body object and fill it up with blank values.
 var body = {};
 body.TransactionID = '';
 body.TicketNumber = '';
@@ -19,19 +20,19 @@ body.ServiceStatus = '';
 	
 var ticketfound = false;
 var ticketfoundin1or2 = -1;
-// Take values from the request body	
 var incidentNumber = '';
 var summary = '';
 var incidentDescription = '';
 var activityDescription = '' ;
 var priority = 0;
 var ticketPriority = 0;
+// Take values from the request body	
 var reqData = request.body.data.CreateIncidentRequest;
-if (reqData == null) {
+if (reqData == null) { // Not a Create but an Update request, take the IncidentNumber
 	reqData = request.body.data.UpdateIncidentRequest;
 	incidentNumber = reqData.Activity.IncidentNumber;
 } // if
-else {
+else { // take values from the Create request
 	incidentNumber = reqData.Incident.IncidentNumber;
 	summary = reqData.Incident.Summary;
 	incidentDescription = reqData.Incident.Description;
@@ -43,7 +44,7 @@ else {
 	if (priority == 2) { ticketPriority = 3; }
 	if (priority == 3) { ticketPriority = 2; }
 } // else
-	
+// Take further values regaredless of the Action	
 var pluginName = reqData.Name;
 var pluginID = reqData.ID;
 var transactionID = reqData.TransactionID;
@@ -58,17 +59,16 @@ myObj.addQuery('correlation_id', '=', incidentNumber);
 myObj.query();
 var ticketsysid;
 var ticketstatus;
-while(myObj.next()){
-	//Logic you want to execute. Use myObj.field_name to reference record fields
+while(myObj.next()) { //Logic you want to execute. Use myObj.field_name to reference record fields
 	ticketfound = true;
 	ticketfoundin1or2 = 1;
 	ticketNumber = myObj.number;
 	ticketsysid = myObj.sys_id;
 	ticketstatus = parseInt(myObj.state);
-	body.ticketstatus = ticketstatus;
+	//body.ticketstatus = ticketstatus;
 	// Statuses :  New = 1, In Progress = 2, On Hold = 3, Resolved = 4, Closed = 5, Cancelled = 6
 } // while
-if (!ticketfound) {
+if (!ticketfound) { // Ticket not found by external IncidentNumber, search for it by TicketNumber
 	var myObj2 = new GlideRecord('x_58872_needit_needit');
 	myObj2.addQuery('number', '=', ticketNumber);
 	myObj2.query();
@@ -78,7 +78,7 @@ if (!ticketfound) {
 		ticketNumber = myObj2.number;
 		ticketsysid = myObj2.sys_id;
 		ticketstatus = parseInt(myObj2.state);
-		body.ticketstatus = ticketstatus;
+		//body.ticketstatus = ticketstatus;
 	} // while
 } // if
 	
@@ -223,21 +223,10 @@ switch (action) {
 				case 2: // In Progress, use case 2.2.1
 				case 3: // On Hold, use case 2.2.1
 				case 4: // Resolved, use case 2.2.1
-					var tickettoupdate;
-					if (ticketfoundin1or2 == 1) {
-						tickettoupdate = myObj;
-					} // if
-					else {
-						if (ticketfoundin1or2 == 2) {
-							tickettoupdate = myObj2;
-						} // if
-						else {
-							// ERROR
-						} // else
-					} // else
+					var tickettoupdate = new GlideRecord('x_58872_needit_needit');
+					tickettoupdate.get(ticketsysid);
 					if (tickettoupdate.canWrite()) {
-						//tickettoupdate.work_notes = reqData.Activity.Description;
-						//!tickettoupdate.comments.setJournalEntry(reqData.Activity.Description);
+						tickettoupdate.work_notes = reqData.Activity.Description;
 						tickettoupdate.update();
 						if (!tickettoupdate.isActionAborted()) { // Update succeeded
 							body.Success = true;
@@ -248,11 +237,10 @@ switch (action) {
 							// set body here
 							body.Message = 'Ticket (' + ticketNumber + ') update aborted.';
 						} // else
-					} // if
-					else {
-						// cannot write
+					} // if canWrite
+					else { // cannot write
 						body.Message = 'Ticket (' + ticketNumber + ') cannot be updated.';
-					} // else
+					} // else // cannot write
 					break;
 				case 5: // Closed, use case 2.1.2
 					body.Success = true;
@@ -329,9 +317,9 @@ var xmlstring = /*"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelop
 "</s:Envelope>"* /;	
 */	
 	
-//response.setContentType('application/json');
+response.setContentType('application/json');
 response.setStatus(200);
-response.setBody(body); //xmlstring); // body);	
+response.setBody(body);
 })(request, response);]]></operation_script>
         <operation_uri>/api/x_58872_needit/needit_api</operation_uri>
         <produces>application/json,application/xml,text/xml</produces>
@@ -346,14 +334,14 @@ response.setBody(body); //xmlstring); // body);
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2020-08-11 09:54:09</sys_created_on>
         <sys_id>be140e311bae1010b28f8515ec4bcbcf</sys_id>
-        <sys_mod_count>202</sys_mod_count>
+        <sys_mod_count>211</sys_mod_count>
         <sys_name>postresource</sys_name>
         <sys_package display_value="NeedIt" source="x_58872_needit">6ead8e780f603200cd674f8ce1050ed1</sys_package>
         <sys_policy/>
         <sys_scope display_value="NeedIt">6ead8e780f603200cd674f8ce1050ed1</sys_scope>
         <sys_update_name>sys_ws_operation_be140e311bae1010b28f8515ec4bcbcf</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2020-09-28 14:18:38</sys_updated_on>
+        <sys_updated_on>2020-09-29 12:07:54</sys_updated_on>
         <web_service_definition display_value="NeedIt API">7562cafd1b6e1010b28f8515ec4bcb2f</web_service_definition>
         <web_service_version/>
     </sys_ws_operation>
