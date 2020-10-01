@@ -4,13 +4,13 @@
         <function_name>execute</function_name>
         <name>SOAPXML1</name>
         <scoped_name>x_58872_needit_SOAPXML1</scoped_name>
-        <script><![CDATA[(function scriptedWebServiceOperation(request, response) { // 2020.09.28. 16:18
+        <script><![CDATA[(function scriptedWebServiceOperation(request, response) { // 2020.10.01. 14:03
 var xmldoc = new XMLDocument2();
 //1. wrong!	if (xmldoc.parseXML( "<Response></Response>")) {
 //2. wrong! if (xmldoc.parseXML("<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:Header /><SOAP-ENV:Body><SOAP-ENV:CreateIncidentResponse xmlns=\"Xerox.XIS.MpsHelpDeskService\"><SOAP-ENV:CreateIncidentResult xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"></SOAP-ENV:CreateIncidentResult></SOAP-ENV:CreateIncidentResponse></SOAP-ENV:Body></SOAP-ENV:Envelope>")) {
 //3. wrong!	if (xmldoc.parseXML("<SOAP-ENV:CreateIncidentResponse xmlns=\"Xerox.XIS.MpsHelpDeskService\"><SOAP-ENV:CreateIncidentResult xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"></SOAP-ENV:CreateIncidentResult></SOAP-ENV:CreateIncidentResponse>")) {	
 if (xmldoc.parseXML("<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"><SOAP-ENV:CreateIncidentResponse xmlns=\"Xerox.XIS.MpsHelpDeskService\"><SOAP-ENV:CreateIncidentResult xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\"></SOAP-ENV:CreateIncidentResult></SOAP-ENV:CreateIncidentResponse></SOAP-ENV:Envelope>")) {
-gs.error(xmldoc.getDocumentElement());	
+//gs.error(xmldoc.getDocumentElement());	
 	xmldoc.setCurrentElement(xmldoc.getNode("/SOAP-ENV:Envelope/SOAP-ENV:CreateIncidentResponse/SOAP-ENV:CreateIncidentResult"));
 //	xmldoc.createElementWithTextValue("SOAP-ENV:Name", request.Name);
 //	xmldoc.createElementWithTextValue("SOAP-ENV:ID", request.ID);
@@ -28,7 +28,7 @@ else {
 } // else
 //gs.info("xmldoc info");
 //gs.warn("xmldoc warn");
-gs.error(xmldoc.getDocumentElement());
+//gs.error(xmldoc.getDocumentElement());
 //gs.debug("xmldoc debug");
 if (xmldoc.isValid()) {
 	response.soapResponseElement = xmldoc.getDocumentElement();			
@@ -62,14 +62,14 @@ response.ErrorType = request.AssetAssetNumber;
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2020-09-02 11:10:03</sys_created_on>
         <sys_id>0e7827341b8f1010b28f8515ec4bcb12</sys_id>
-        <sys_mod_count>148</sys_mod_count>
+        <sys_mod_count>149</sys_mod_count>
         <sys_name>SOAPXML1</sys_name>
         <sys_package display_value="NeedIt" source="x_58872_needit">6ead8e780f603200cd674f8ce1050ed1</sys_package>
         <sys_policy/>
         <sys_scope display_value="NeedIt">6ead8e780f603200cd674f8ce1050ed1</sys_scope>
         <sys_update_name>sys_web_service_0e7827341b8f1010b28f8515ec4bcb12</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2020-09-28 14:18:22</sys_updated_on>
+        <sys_updated_on>2020-10-01 12:04:25</sys_updated_on>
         <wsdl>https://dev15537.service-now.com/x_58872_needit_SOAPXML1.do?WSDL</wsdl>
         <wsdl_compliance>true</wsdl_compliance>
     </sys_web_service>
