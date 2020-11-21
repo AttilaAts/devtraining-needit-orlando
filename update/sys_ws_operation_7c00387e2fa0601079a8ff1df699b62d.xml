@@ -6,15 +6,15 @@
         <default_operation_uri/>
         <enforce_acl>cf9d01d3e73003009d6247e603f6a990</enforce_acl>
         <http_method>POST</http_method>
-        <name>AssetPublish</name>
-        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) { // 2020.11.20. 15:45
+        <name>AssetPublishRPA</name>
+        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) { // 2020.11.21. 17:42
 var body = {};
 	
-var reqData = request.body.data.AssetSynchronizeRequest;	
+var reqData = request.body.data;
 	
 body.TransactionID = reqData.TransactionID;
-body.AssetNumber = reqData.Asset.AssetNumber;
-body.SerialNumber = reqData.Asset.SerialNumber;
+body.AssetNumber = reqData.AssetNumber;
+body.SerialNumber = reqData.SerialNumber;
 body.Message = 'The asset has been updated.';
 body.Succcess = true;
 body.Success = true;
@@ -23,10 +23,10 @@ response.setContentType('application/json');
 response.setStatus(200);
 response.setBody(body);
 })(request, response);]]></operation_script>
-        <operation_uri>/api/x_58872_needit/needit_api/AssetPublish</operation_uri>
+        <operation_uri>/api/x_58872_needit/needit_api/AssetPublishRPA</operation_uri>
         <produces>application/json,application/xml,text/xml</produces>
         <produces_customized>false</produces_customized>
-        <relative_path>/AssetPublish</relative_path>
+        <relative_path>/AssetPublishRPA</relative_path>
         <request_example/>
         <requires_acl_authorization>true</requires_acl_authorization>
         <requires_authentication>true</requires_authentication>
@@ -34,16 +34,16 @@ response.setBody(body);
         <short_description/>
         <sys_class_name>sys_ws_operation</sys_class_name>
         <sys_created_by>admin</sys_created_by>
-        <sys_created_on>2020-11-20 11:54:14</sys_created_on>
-        <sys_id>2418665a2f24201079a8ff1df699b693</sys_id>
-        <sys_mod_count>8</sys_mod_count>
-        <sys_name>AssetPublish</sys_name>
+        <sys_created_on>2020-11-21 16:25:32</sys_created_on>
+        <sys_id>7c00387e2fa0601079a8ff1df699b62d</sys_id>
+        <sys_mod_count>3</sys_mod_count>
+        <sys_name>AssetPublishRPA</sys_name>
         <sys_package display_value="NeedIt" source="x_58872_needit">6ead8e780f603200cd674f8ce1050ed1</sys_package>
         <sys_policy/>
         <sys_scope display_value="NeedIt">6ead8e780f603200cd674f8ce1050ed1</sys_scope>
-        <sys_update_name>sys_ws_operation_2418665a2f24201079a8ff1df699b693</sys_update_name>
+        <sys_update_name>sys_ws_operation_7c00387e2fa0601079a8ff1df699b62d</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2020-11-21 16:27:35</sys_updated_on>
+        <sys_updated_on>2020-11-21 16:42:30</sys_updated_on>
         <web_service_definition display_value="NeedIt API">7562cafd1b6e1010b28f8515ec4bcb2f</web_service_definition>
         <web_service_version/>
     </sys_ws_operation>
