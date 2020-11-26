@@ -7,15 +7,12 @@
         <enforce_acl>cf9d01d3e73003009d6247e603f6a990</enforce_acl>
         <http_method>POST</http_method>
         <name>AssetPublish</name>
-        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) { // 2020.11.25. 8:36
+        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) { // 2020.11.26. 17:02
 var body = {};
 if (request.body.data.AssetSynchronizeRequest == null) {
-	body.TransactionID = '';
-	body.AssetNumber = '';
-	body.SerialNumber = '';
+	body.TransactionID = body.AssetNumber = body.SerialNumber = '';
 	body.Message = 'Invalid request.';
-	body.Succcess = false;
-	body.Success = false;
+	body.Succcess = body.Success = false;
 } // if
 else {
 	var reqData = request.body.data.AssetSynchronizeRequest;
@@ -40,13 +37,11 @@ else {
 			body.Message += 'SerialNumber must not be blank.';
 			body.SerialNumber = '';
 		} // if
-		body.Succcess = false;
-		body.Success = false;
+		body.Succcess = body.Success = false;
 	} // if
 	else {
 		body.Message = 'The asset has been updated.';
-		body.Succcess = true;
-		body.Success = true;
+		body.Succcess = body.Success = true;
 	} // else
 } // else
 response.setContentType('application/json');
@@ -66,14 +61,14 @@ response.setBody(body);
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2020-11-20 11:54:14</sys_created_on>
         <sys_id>2418665a2f24201079a8ff1df699b693</sys_id>
-        <sys_mod_count>14</sys_mod_count>
+        <sys_mod_count>16</sys_mod_count>
         <sys_name>AssetPublish</sys_name>
         <sys_package display_value="NeedIt" source="x_58872_needit">6ead8e780f603200cd674f8ce1050ed1</sys_package>
         <sys_policy/>
         <sys_scope display_value="NeedIt">6ead8e780f603200cd674f8ce1050ed1</sys_scope>
         <sys_update_name>sys_ws_operation_2418665a2f24201079a8ff1df699b693</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2020-11-25 16:06:14</sys_updated_on>
+        <sys_updated_on>2020-11-26 16:03:03</sys_updated_on>
         <web_service_definition display_value="NeedIt API">7562cafd1b6e1010b28f8515ec4bcb2f</web_service_definition>
         <web_service_version/>
     </sys_ws_operation>
