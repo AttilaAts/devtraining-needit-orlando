@@ -32,8 +32,8 @@
 		current.setAbortAction(false);
 		return;
 	} // if
-	var lastmodification = "2020.07.30. 10:51";
-// rightnow stores the current time
+	var lastmodification = "2021.01.13. 20:26"; // rightnow stores the current time
+/*	
 	var rightnow = new GlideDateTime();
 	rightnow.addDaysLocalTime(2);
 	// Create a GlideDateTime object for the When needed date
@@ -47,6 +47,26 @@
 		gs.addErrorMessage("'When needed' date cannot be in the past. Your request has not been saved to the database.");
 		current.setAbortAction(true);
 	} // if
+*/
+
+// Instantiate the NeedItUtils class.  Call the isDatePast method and pass the u_when_needed value.
+	var niutils = new NeedItUtils();
+	var isPast = niutils.isDatePast(current.u_when_needed);
+	// If the isDatePast method returns true, the date is in the past.
+	if(isPast == true){
+		gs.addErrorMessage("When needed date cannot be in the past! Your request has not been saved to the database.");
+		current.setAbortAction(true);
+	} // if
+	else {
+		// pass the When needed field value to the isDateToday method in NeedItUtils
+		var isToday = niutils.isDateToday(current.u_when_needed);
+		// if the isDateToday method returns true the When needed date is today 
+		if(isToday == true){
+			gs.addErrorMessage("You cannot submit NeedIt requests for today.");
+			current.setAbortAction(true);
+		} // if
+	} // else
+
 })(current, previous);]]></script>
         <sys_class_name>sys_script</sys_class_name>
         <sys_created_by>admin</sys_created_by>
@@ -54,7 +74,7 @@
         <sys_domain>global</sys_domain>
         <sys_domain_path>/</sys_domain_path>
         <sys_id>65e241462f09501060b85d372799b67c</sys_id>
-        <sys_mod_count>33</sys_mod_count>
+        <sys_mod_count>38</sys_mod_count>
         <sys_name> NeedIt When needed field date</sys_name>
         <sys_overrides/>
         <sys_package display_value="NeedIt" source="x_58872_needit">6ead8e780f603200cd674f8ce1050ed1</sys_package>
@@ -62,7 +82,7 @@
         <sys_scope display_value="NeedIt">6ead8e780f603200cd674f8ce1050ed1</sys_scope>
         <sys_update_name>sys_script_65e241462f09501060b85d372799b67c</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2020-07-30 08:52:16</sys_updated_on>
+        <sys_updated_on>2021-01-13 19:34:43</sys_updated_on>
         <template/>
         <when>before</when>
     </sys_script>
