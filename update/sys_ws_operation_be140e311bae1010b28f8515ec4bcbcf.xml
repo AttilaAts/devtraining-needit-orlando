@@ -7,7 +7,7 @@
         <enforce_acl>cf9d01d3e73003009d6247e603f6a990</enforce_acl>
         <http_method>POST</http_method>
         <name>postresource</name>
-        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) { // 2021.03.05. 9:11
+        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) { // 2021.03.26. 13:54
 // Create the response body object and fill it up with blank values.
 var body = {};
 body.TransactionID = '';
@@ -163,7 +163,8 @@ switch (action) {
 			S += 'Service status :\r\n\t' + reqData.Incident.ServiceStatus + '\r\n\r\n';
 			S += 'Summary :\r\n\t' + summary + '\r\n\r\n';
 			S += 'Incident description :\r\n\t' + incidentDescription + '\r\n\r\n';
-			S += 'Activity desctiption :\r\n\t' + activityDescription + '\r\n\r\n';
+			gs.error("Incident description : " + incidentDescription);
+			S += 'Activity description :\r\n\t' + activityDescription + '\r\n\r\n';
 			S += 'Problem type :\r\n\t' + reqData.Incident.ProblemType + '\r\n';
 			S += 'Problem sub-type :\r\n\t' + reqData.Incident.ProblemSubType + '\r\n';
 			S += 'Impact :\r\n\t' + reqData.Incident.Impact + '\r\n';
@@ -180,8 +181,8 @@ switch (action) {
 			var gdt = new GlideDateTime();
 			gdt.addSeconds(60*60*24*3);
 			newTicket.u_when_needed = gdt;
-			newTicket.u_requested_for = 'System Administrator';
-			newTicket.u_requested_for_email = 'admin@example.com';
+			newTicket.u_requested_for = 'Attila Ats'; // System Administrator
+			newTicket.u_requested_for_email = 'ats.attila@upcmail.hu';
 			newTicket.u_request_type = 'legal';
 			newTicket.u_what_needed = 'Legal 1';
 			newTicket.correlation_id = incidentNumber;
@@ -206,7 +207,7 @@ switch (action) {
 		} // 
 	break;
 
-  case 'UPDATE':
+  case 'UPDATE': // New (1), In Progress (2), On Hold (3)
 	something = 'It is a Update request.';
 	accountName = reqData.Activity.AccountName;
 /*	if ((ticketNumber == null) || ((ticketNumber != null) && (ticketNumber == '')) )  {
@@ -227,6 +228,8 @@ switch (action) {
 					tickettoupdate.get(ticketsysid);
 					if (tickettoupdate.canWrite()) {
 						tickettoupdate.work_notes = reqData.Activity.Description;
+						gs.error(reqData.Activity.Description);
+						//gs.warn(reqData.Activity.Description);
 						tickettoupdate.update();
 						if (!tickettoupdate.isActionAborted()) { // Update succeeded
 							body.Success = true;
@@ -270,16 +273,19 @@ switch (action) {
 		} // else ticket not found
 	break; // UPDATE
 		
-  case 'REASSIGN':
+  case 'REASSIGN': // Reassigned (7)
 	something = 'It is a Reassign request.';
+		body.Success = true;
+		body.Message = 'Ticket has been reassigned.';
+		body.ServiceStatus = '';
 	break; // REASSIGN
-  case 'RESOLVE':
+  case 'RESOLVE': // Resolved (4)
 	something = 'It is a Resolve request.';
 	break; // RESOLVE
-  case 'CLOSE':
+  case 'CLOSE': // Closed (5)
 	something = 'It is a Close request.';
 	break; // CLOSE
-  case 'CANCEL':
+  case 'CANCEL': // Cancelled (6)
 	something = 'It is a Cancel request.';
 	break; // CANCEL
   default: // invalid Action
@@ -334,14 +340,14 @@ response.setBody(body);
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2020-08-11 09:54:09</sys_created_on>
         <sys_id>be140e311bae1010b28f8515ec4bcbcf</sys_id>
-        <sys_mod_count>216</sys_mod_count>
+        <sys_mod_count>232</sys_mod_count>
         <sys_name>postresource</sys_name>
         <sys_package display_value="NeedIt" source="x_58872_needit">6ead8e780f603200cd674f8ce1050ed1</sys_package>
         <sys_policy/>
         <sys_scope display_value="NeedIt">6ead8e780f603200cd674f8ce1050ed1</sys_scope>
         <sys_update_name>sys_ws_operation_be140e311bae1010b28f8515ec4bcbcf</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-03-05 08:11:13</sys_updated_on>
+        <sys_updated_on>2021-03-26 12:53:23</sys_updated_on>
         <web_service_definition display_value="NeedIt API">7562cafd1b6e1010b28f8515ec4bcb2f</web_service_definition>
         <web_service_version/>
     </sys_ws_operation>
