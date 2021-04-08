@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_script_include">
+    <sys_script_include action="INSERT_OR_UPDATE">
+        <access>package_private</access>
+        <active>true</active>
+        <api_name>x_58872_needit.NeedItUtils</api_name>
+        <caller_access/>
+        <client_callable>false</client_callable>
+        <description/>
+        <name>NeedItUtils</name>
+        <script><![CDATA[var NeedItUtils = Class.create(); // 2021.04.07. 14:23
+NeedItUtils.prototype = {
+    initialize: function() {
+    },
+	
+	isDatePast: function(strDate){
+		// Create GlideDateTime objects for the current date and the passed in date
+		var rightnow = new GlideDateTime();
+		var testdate = new GlideDateTime(strDate);
+		
+		// If the testdate is before rightnow, return true, else return false
+		if (testdate.before(rightnow)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}, // isDatePast
+	
+		isDateToday: function(strDate){
+		// Create GlideDateTime objects for the current date and the passed in date
+		var rightnow = new GlideDateTime();
+		var testdate = new GlideDateTime(strDate);
+		// Get the date portion of rightnow and testdate (no timestamp)
+		var today = rightnow.getLocalDate();
+		var istoday = testdate.getLocalDate();
+		// Compare today and istoday to see if they are the same day
+		if(today.compareTo(istoday) == 0){
+			return true;
+		}
+		else {
+			return false;
+		}
+	}, // isDateToday
+	
+	
+DecodeUnicodeChars: function(source) {
+	var result = '';
+	try {
+		// example u_last_name: '71 114 248 110 229 115'
+		var codes = String.concat('[',source.u_first_name,']');
+		codes = codes.replace(/\s/g,',');
+		codes = JSON.parse(codes);
+		for (var x in codes) {
+			result = result + String.fromCharCode(codes[x]);
+		}
+	} // try
+	catch (e) {
+		error = true;
+		log.error('error on target field "last name": ' + e.message);
+	} // catch
+	return result;
+},	
+	
+    type: 'NeedItUtils'
+};]]></script>
+        <sys_class_name>sys_script_include</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2021-04-07 12:22:46</sys_created_on>
+        <sys_id>9f2a91f62fd32010a580ad2ef699b660</sys_id>
+        <sys_mod_count>4</sys_mod_count>
+        <sys_name>NeedItUtils</sys_name>
+        <sys_package display_value="NeedIt" source="x_58872_needit">6ead8e780f603200cd674f8ce1050ed1</sys_package>
+        <sys_policy>read</sys_policy>
+        <sys_scope display_value="NeedIt">6ead8e780f603200cd674f8ce1050ed1</sys_scope>
+        <sys_update_name>sys_script_include_9f2a91f62fd32010a580ad2ef699b660</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2021-04-07 12:46:20</sys_updated_on>
+    </sys_script_include>
+</record_update>
