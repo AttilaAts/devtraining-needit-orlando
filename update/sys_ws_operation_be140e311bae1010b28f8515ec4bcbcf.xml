@@ -7,7 +7,7 @@
         <enforce_acl>cf9d01d3e73003009d6247e603f6a990</enforce_acl>
         <http_method>POST</http_method>
         <name>postresource</name>
-        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) { // 2021.04.15. 17:49
+        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) { // 2021.04.17. 19:51
 // Create the response body object and fill it up with blank values.
 var body = {};
 body.TransactionID = '';
@@ -81,6 +81,31 @@ if (!ticketfound) { // Ticket not found by external IncidentNumber, search for i
 		//body.ticketstatus = ticketstatus;
 	} // while
 } // if
+
+switch (ticketstatus) {
+	case 1:
+		ticketStatusName = 'New';
+		break;
+	case 2:
+		ticketStatusName = 'In Progress';
+		break;
+	case 3:
+		ticketStatusName = 'On Hold';
+		break;
+	case 4:
+		ticketStatusName = 'Resolved';
+		break;
+	case 5:
+		ticketStatusName = 'Closed';
+		break;
+	case 6:
+		ticketStatusName = 'Cancelled';
+		break;
+	default:
+		ticketStatusName = 'Unknown';
+	break;
+} // switch ticketstatus
+	
 	
 switch (action) {
   case 'CREATE':
@@ -91,29 +116,6 @@ switch (action) {
 			body.TicketNumber = ticketNumber;
 			body.IncidentNumber = incidentNumber;
 			body.ErrorType = '';
-			switch (ticketstatus) {
-				case 1:
-					ticketStatusName = 'New';
-					break;
-				case 2:
-					ticketStatusName = 'In Progress';
-					break;
-				case 3:
-					ticketStatusName = 'On Hold';
-					break;
-				case 4:
-					ticketStatusName = 'Resolved';
-					break;
-				case 5:
-					ticketStatusName = 'Closed';
-					break;
-				case 6:
-					ticketStatusName = 'Cancelled';
-					break;
-				default:
-					ticketStatusName = 'Unknown';
-					break;
-			} // switch
 			switch (ticketstatus) {
 				case 1: // New, use case 2.1.2
 				case 2: // In Progress, use case 2.1.2
@@ -370,14 +372,14 @@ response.setBody(body);
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2020-08-11 09:54:09</sys_created_on>
         <sys_id>be140e311bae1010b28f8515ec4bcbcf</sys_id>
-        <sys_mod_count>253</sys_mod_count>
+        <sys_mod_count>255</sys_mod_count>
         <sys_name>postresource</sys_name>
         <sys_package display_value="NeedIt" source="x_58872_needit">6ead8e780f603200cd674f8ce1050ed1</sys_package>
         <sys_policy/>
         <sys_scope display_value="NeedIt">6ead8e780f603200cd674f8ce1050ed1</sys_scope>
         <sys_update_name>sys_ws_operation_be140e311bae1010b28f8515ec4bcbcf</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-04-15 15:49:59</sys_updated_on>
+        <sys_updated_on>2021-04-17 17:51:11</sys_updated_on>
         <web_service_definition display_value="NeedIt API">7562cafd1b6e1010b28f8515ec4bcb2f</web_service_definition>
         <web_service_version/>
     </sys_ws_operation>
