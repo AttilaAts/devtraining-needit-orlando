@@ -7,7 +7,7 @@
         <enforce_acl>cf9d01d3e73003009d6247e603f6a990</enforce_acl>
         <http_method>POST</http_method>
         <name>postresource</name>
-        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) { // 2021.04.17. 19:51
+        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) { // 2021.04.19. 11:10
 // Create the response body object and fill it up with blank values.
 var body = {};
 body.TransactionID = '';
@@ -101,8 +101,11 @@ switch (ticketstatus) {
 	case 6:
 		ticketStatusName = 'Cancelled';
 		break;
+	case 7:
+		ticketStatusName = 'Reassigned';
+		break;
 	default:
-		ticketStatusName = 'Unknown';
+		ticketStatusName = '!!!!!-UNKNOWN-!!!!!';
 	break;
 } // switch ticketstatus
 	
@@ -154,7 +157,11 @@ switch (action) {
 			newTicket.initialize();
 			newTicket.state = 1;
 			newTicket.priority = ticketPriority;
-			var S = 'Environment: ' + reqData.TicketNumber + '\r\n\r\n' + 'Plugin Name :\t' + pluginName + '\r\n'; // \r\n
+			var S = '';
+			if (reqData.TicketNumber != null) {
+				S += 'Environment: ' + reqData.TicketNumber + '\r\n\r\n';
+			} //if
+			S += 'Plugin Name :\t' + pluginName + '\r\n'; // \r\n
 			S += 'Plugin ID :\t' + pluginID + '\r\n'; // \r\n
 			S += 'Transaction ID :\t' + transactionID + '\r\n'; // \r\n
 			S += 'Action :\r\n\t' + action + '\r\n';
@@ -165,7 +172,7 @@ switch (action) {
 			S += 'Service status :\r\n\t' + reqData.Incident.ServiceStatus + '\r\n\r\n';
 			S += 'Summary :\r\n\t' + summary + '\r\n\r\n';
 			S += 'Incident description :\r\n\t' + incidentDescription + '\r\n\r\n';
-			gs.error("Incident description : " + incidentDescription);
+			//gs.error("Incident description : " + incidentDescription);
 			S += 'Activity description :\r\n\t' + activityDescription + '\r\n\r\n';
 			S += 'Problem type :\r\n\t' + reqData.Incident.ProblemType + '\r\n';
 			S += 'Problem sub-type :\r\n\t' + reqData.Incident.ProblemSubType + '\r\n';
@@ -188,6 +195,11 @@ switch (action) {
 			newTicket.u_request_type = 'legal';
 			newTicket.u_what_needed = 'Legal 1';
 			newTicket.correlation_id = incidentNumber;
+			newTicket.u_pluginid = pluginID;
+			newTicket.u_pluginname = pluginName;
+			if (reqData.TicketNumber != null) {
+				newTicket.u_sourceenvironment = reqData.TicketNumber;
+			} // if
 			if (newTicket.canCreate()) {
 				var newsysid = newTicket.insert();
 				if (!newTicket.isActionAborted()) { // Insert succeeded
@@ -318,6 +330,13 @@ switch (action) {
 		body.TicketNumber = reqData.TicketNumber;
 		body.IncidentNumber = incidentNumber;
 		body.ErrorType = '';
+/*		
+		try {
+			//
+		} // try
+		catch (exception) {
+		} // catch
+*/		
 	break; // CANCEL
 		
   default: // invalid Action
@@ -372,14 +391,14 @@ response.setBody(body);
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2020-08-11 09:54:09</sys_created_on>
         <sys_id>be140e311bae1010b28f8515ec4bcbcf</sys_id>
-        <sys_mod_count>255</sys_mod_count>
+        <sys_mod_count>260</sys_mod_count>
         <sys_name>postresource</sys_name>
         <sys_package display_value="NeedIt" source="x_58872_needit">6ead8e780f603200cd674f8ce1050ed1</sys_package>
         <sys_policy/>
         <sys_scope display_value="NeedIt">6ead8e780f603200cd674f8ce1050ed1</sys_scope>
         <sys_update_name>sys_ws_operation_be140e311bae1010b28f8515ec4bcbcf</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-04-17 17:51:11</sys_updated_on>
+        <sys_updated_on>2021-04-19 10:49:25</sys_updated_on>
         <web_service_definition display_value="NeedIt API">7562cafd1b6e1010b28f8515ec4bcb2f</web_service_definition>
         <web_service_version/>
     </sys_ws_operation>
