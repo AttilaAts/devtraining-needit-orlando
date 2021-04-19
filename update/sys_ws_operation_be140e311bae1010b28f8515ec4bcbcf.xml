@@ -7,7 +7,7 @@
         <enforce_acl>cf9d01d3e73003009d6247e603f6a990</enforce_acl>
         <http_method>POST</http_method>
         <name>postresource</name>
-        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) { // 2021.04.19. 11:10
+        <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) { // 2021.04.19. 16:38
 // Create the response body object and fill it up with blank values.
 var body = {};
 body.TransactionID = '';
@@ -26,6 +26,8 @@ var incidentDescription = '';
 var activityDescription = '' ;
 var priority = 0;
 var ticketPriority = 0;
+var ticketImpact = 0;
+var ticketUrgency = 0;
 // Take values from the request body	
 var reqData = request.body.data.CreateIncidentRequest;
 if (reqData == null) { // Not a Create but an Update request, take the IncidentNumber
@@ -38,11 +40,45 @@ else { // take values from the Create request
 	incidentDescription = reqData.Incident.Description;
 	activityDescription = reqData.Incident.Activity.Description;
 	// Take Urgency from the request and translate it to ServiceNow Priority	
-	priority = parseInt(reqData.Incident.Urgency);
+	/*priority = parseInt(reqData.Incident.Urgency);
 	if (priority <= 1) { ticketPriority = 4; }
 	if (priority == 2) { ticketPriority = 3; }
 	if (priority == 3) { ticketPriority = 2; }
-	if (priority >= 4) { ticketPriority = 1; }
+	if (priority >= 4) { ticketPriority = 1; }*/
+	if (reqData.Incident.IncidentPriority != null) {
+	switch (reqData.Incident.IncidentPriority) {
+		case '1 - Critical: Very High Business Impact':
+			ticketPriority = 1;
+			break;
+		case '2 - Severe: High Business Impact':
+			ticketPriority = 2;
+			break;
+		case '3 - Moderate: Moderate Business Impact':
+			ticketPriority = 3;
+			break;
+		case '4 - Minimal: Minimal Business Impact':
+			ticketPriority = 4;
+			break;
+		default:
+			ticketPriority = 0;
+			break;
+		} // switch
+	} // if
+	else {
+		ticketPriority = 0;		
+	} // else
+	
+	impact = parseInt(reqData.Incident.Impact);
+	if (impact <= 1) { ticketImpact = 3; }
+	if (impact == 2) { ticketImpact = 2; }
+	if (impact == 3) { ticketImpact = 1; }
+	if (impact >= 4) { ticketImpact = 0; }
+	
+	urgency = parseInt(reqData.Incident.Urgency);
+	if (urgency <= 1) { ticketUrgency = 3; }
+	if (urgency == 2) { ticketUrgency = 2; }
+	if (urgency == 3) { ticketUrgency = 3; }
+	if (urgency >= 4) { ticketUrgency = 0; }
 } // else
 // Take further values regaredless of the Action	
 var pluginName = reqData.Name;
@@ -157,27 +193,32 @@ switch (action) {
 			newTicket.initialize();
 			newTicket.state = 1;
 			newTicket.priority = ticketPriority;
+			newTicket.impact = ticketImpact;
+			newTicket.urgency = ticketUrgency;
 			var S = '';
+			/*S += 'Summary :\r\n\t' + summary + '\r\n\r\n';*/
+			S += 'Incident description :\r\n-------------------------------\r\n' + incidentDescription + '\r\n\r\n';
+			S += 'Activity description :\r\n-------------------------------\r\n' + activityDescription + '\r\n\r\n\r\n';
+			/*
 			if (reqData.TicketNumber != null) {
 				S += 'Environment: ' + reqData.TicketNumber + '\r\n\r\n';
 			} //if
 			S += 'Plugin Name :\t' + pluginName + '\r\n'; // \r\n
 			S += 'Plugin ID :\t' + pluginID + '\r\n'; // \r\n
+			*/
 			S += 'Transaction ID :\t' + transactionID + '\r\n'; // \r\n
 			S += 'Action :\r\n\t' + action + '\r\n';
-			S += 'Incident Number :\r\n\t' + incidentNumber + '\r\n';
+			/*S += 'Incident Number :\r\n\t' + incidentNumber + '\r\n';*/
 			S += 'Account name :\r\n\t' + accountName + '\r\n';
 			S += 'Assignment group :\r\n\t' + reqData.Incident.AssignmentGroup + '\r\n';
 			S += 'Service :\r\n\t' + reqData.Incident.Service + '\r\n';
 			S += 'Service status :\r\n\t' + reqData.Incident.ServiceStatus + '\r\n\r\n';
-			S += 'Summary :\r\n\t' + summary + '\r\n\r\n';
-			S += 'Incident description :\r\n\t' + incidentDescription + '\r\n\r\n';
 			//gs.error("Incident description : " + incidentDescription);
-			S += 'Activity description :\r\n\t' + activityDescription + '\r\n\r\n';
 			S += 'Problem type :\r\n\t' + reqData.Incident.ProblemType + '\r\n';
-			S += 'Problem sub-type :\r\n\t' + reqData.Incident.ProblemSubType + '\r\n';
+			S += 'Problem sub-type :\r\n\t' + reqData.Incident.ProblemSubType + '\r\n\r\n';
 			S += 'Impact :\r\n\t' + reqData.Incident.Impact + '\r\n';
-			S += 'Urgency :\r\n\t' + reqData.Incident.Urgency + '\r\n\r\n';
+			S += 'Urgency :\r\n\t' + reqData.Incident.Urgency + '\r\n';
+			S += 'Incident Priority: ' + reqData.Incident.IncidentPriority + '\r\n\r\n';
 			S += 'Asset Number :\r\n\t' + reqData.Incident.Asset.AssetNumber + '\r\n';
 			S += 'Serial Number :\r\n\t' + reqData.Incident.Asset.SerialNumber + '\r\n\r\n';
 			S += 'Customer username :\r\n\t' + reqData.Incident.Customer.UserName + '\r\n';
@@ -186,7 +227,7 @@ switch (action) {
 			S += 'Customer e-mail :\r\n\t' + reqData.Incident.Customer.Email + '\r\n';
 			S += 'Customer phone :\r\n\t' + reqData.Incident.Customer.Phone + '\r\n';
 			newTicket.description = S;
-			newTicket.short_description = reqData.TicketNumber + ' - ' + summary;
+			newTicket.short_description = /*reqData.TicketNumber + ' - ' +*/ summary;
 			var gdt = new GlideDateTime();
 			gdt.addSeconds(60*60*24*3);
 			newTicket.u_when_needed = gdt;
@@ -391,14 +432,14 @@ response.setBody(body);
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2020-08-11 09:54:09</sys_created_on>
         <sys_id>be140e311bae1010b28f8515ec4bcbcf</sys_id>
-        <sys_mod_count>260</sys_mod_count>
+        <sys_mod_count>271</sys_mod_count>
         <sys_name>postresource</sys_name>
         <sys_package display_value="NeedIt" source="x_58872_needit">6ead8e780f603200cd674f8ce1050ed1</sys_package>
         <sys_policy/>
         <sys_scope display_value="NeedIt">6ead8e780f603200cd674f8ce1050ed1</sys_scope>
         <sys_update_name>sys_ws_operation_be140e311bae1010b28f8515ec4bcbcf</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2021-04-19 10:49:25</sys_updated_on>
+        <sys_updated_on>2021-04-19 14:37:54</sys_updated_on>
         <web_service_definition display_value="NeedIt API">7562cafd1b6e1010b28f8515ec4bcb2f</web_service_definition>
         <web_service_version/>
     </sys_ws_operation>
